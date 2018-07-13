@@ -64,6 +64,7 @@ class Article extends Component {
                   api.postComment(
                     this.state.comment,
                     this.props.userObj,
+                    article._id,
                     this.clearComment()
                   )
                 }
