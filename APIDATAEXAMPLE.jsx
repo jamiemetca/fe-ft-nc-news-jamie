@@ -20,7 +20,8 @@ comment:
   _id: "5b40b6d3bfcb0f5d40a0363f",
     created_at: 1454293795551,
       votes: 11,
-        body:
-  "Sit sequi odio suscipit. Iure quisquam qui alias d…b rerum consequuntur. Id ab aliquid autem dolore.",
-    belongs_to: "5b40b6d3bfcb0f5d40a035fd", …
+        body: "Sit sequi odio suscipit. Iure quisquam qui alias distinctio eos officia enim aut sit. Corrupti ut praesentium ut iste earum itaque qui. Dolores in ab rerum consequuntur. Id ab aliquid autem dolore.",
+          belongs_to: "5b40b6d3bfcb0f5d40a035fd",
+            created_by: "weegembump",
+              __v: 0
 }
