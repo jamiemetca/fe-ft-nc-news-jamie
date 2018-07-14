@@ -7,6 +7,7 @@ import "./Article.css";
 
 class Article extends Component {
   state = {
+    commentObj: {},
     comment: "",
     article: {}
   };
@@ -58,17 +59,7 @@ class Article extends Component {
                 value={this.state.comment}
                 onChange={this.updateComment}
               />
-              <button
-                type="button"
-                onClick={() =>
-                  api.postComment(
-                    this.state.comment,
-                    this.props.userObj,
-                    article._id,
-                    this.clearComment()
-                  )
-                }
-              >
+              <button type="button" onClick={this.postCommentAndUpdateState}>
                 submit
               </button>
             </form>
@@ -82,9 +73,29 @@ class Article extends Component {
     }
   }
 
+  postCommentAndUpdateState = () => {
+    const newComment = {
+      _id: Date.now() * Math.floor(Math.random() * 100), //I know this is really bad. Plan to find a better method for a temp ID.
+      created_by: this.props.userObj.username,
+      created_at: Date.now(),
+      votes: 0,
+      body: this.state.comment
+    };
+    this.setState({
+      commentObj: newComment
+    });
+    api.postComment(
+      this.state.comment,
+      this.props.userObj,
+      this.state.article._id,
+      this.clearComment()
+    );
+  };
+
   clearComment = () => {
     this.setState({
-      comment: ""
+      comment: "",
+      commentObj: {}
     });
   };
 

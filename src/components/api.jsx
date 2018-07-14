@@ -12,11 +12,10 @@ export const updateVote = (direction, route, _id, updateState) => {
 };
 
 export const postComment = (comment, userObj, article_id) => {
-  console.log(article_id);
-  // address isn't working, saying undefined
-  // axios.put(`${url}articles/${article_id}/comments`).then(commentObj => {
-  //   console.dir(commentObj);
-  // });
-  // console.log(comment);
-  // console.log(userObj);
+  axios
+    .post(`${url}articles/${article_id}/comments`, {
+      body: comment,
+      created_by: userObj._id
+    })
+    .catch(console.log);
 };

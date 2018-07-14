@@ -90,6 +90,14 @@ class Comments extends Component {
     );
   }
 
+  optimisticallyRenderComments = newComment => {
+    this.state.comments.unshift(newComment);
+    const newComments = this.state.comments;
+    this.setState({
+      comments: newComments
+    });
+  };
+
   deleteComment = event => {
     const { id } = event.target;
     const index = event.target.name;
