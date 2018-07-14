@@ -31,6 +31,9 @@ class Comments extends Component {
           });
         });
     }
+    if (this.props.postedComment !== prevProps.postedComment) {
+      this.optimisticallyRenderComments(this.props.postedComment);
+    }
   }
 
   render() {

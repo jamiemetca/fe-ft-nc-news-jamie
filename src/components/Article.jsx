@@ -65,7 +65,11 @@ class Article extends Component {
             </form>
             <p> +--------------------------------------------------------+ </p>
           </div>
-          <Comments article_id={article._id} userObj={this.props.userObj} />
+          <Comments
+            article_id={article._id}
+            userObj={this.props.userObj}
+            postedComment={this.state.commentObj}
+          />
         </div>
       );
     } else {
