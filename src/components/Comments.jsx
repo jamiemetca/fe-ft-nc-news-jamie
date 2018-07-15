@@ -56,32 +56,37 @@ class Comments extends Component {
                 )}{" "}
                 days ago
               </p>
-              <VoteButton
-                direction="up"
-                route="comments"
-                _id={comment._id}
-                updateState={this.updateState}
-                voted={comment.voted}
-              />
-              <VoteButton
-                direction="down"
-                route="comments"
-                _id={comment._id}
-                updateState={this.updateState}
-                voted={comment.voted}
-              />
+              {comment.belongs_to && (
+                <div>
+                  <VoteButton
+                    direction="up"
+                    route="comments"
+                    _id={comment._id}
+                    updateState={this.updateState}
+                    voted={comment.voted}
+                  />
+                  <VoteButton
+                    direction="down"
+                    route="comments"
+                    _id={comment._id}
+                    updateState={this.updateState}
+                    voted={comment.voted}
+                  />
+                </div>
+              )}
               <p>{comment.votes}</p>
               <p>{comment.body}</p>
-              {userObj.username === comment.created_by && (
-                <button
-                  onClick={this.deleteComment}
-                  type="button"
-                  id={comment._id}
-                  name={index}
-                >
-                  Delete
-                </button>
-              )}
+              {comment.belongs_to &&
+                userObj.username === comment.created_by && (
+                  <button
+                    onClick={this.deleteComment}
+                    type="button"
+                    id={comment._id}
+                    name={index}
+                  >
+                    Delete
+                  </button>
+                )}
               <p>
                 {" "}
                 +--------------------------------------------------------+{" "}
@@ -92,6 +97,17 @@ class Comments extends Component {
       </div>
     );
   }
+
+  // Need to invoke this function once the api call to post the comment has resoled.
+  replaceOptimisticallyRenderedComment = apiCommentObj => {
+    const newComments = [...this.state.comments];
+    newComments.map(comment => {
+      if (comment._id === "__999__") {
+        comment = apiCommentObj;
+      }
+      return comment;
+    });
+  };
 
   optimisticallyRenderComments = newComment => {
     this.state.comments.unshift(newComment);

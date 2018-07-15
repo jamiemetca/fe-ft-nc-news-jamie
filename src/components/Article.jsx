@@ -79,12 +79,13 @@ class Article extends Component {
 
   postCommentAndUpdateState = () => {
     const newComment = {
-      _id: Date.now() * Math.floor(Math.random() * 100), //I know this is really bad. Plan to find a better method for a temp ID.
+      _id: Date.now() * Math.floor(Math.random() * 100), //I know this is bad. Plan to find a better method for a temp ID.
       created_by: this.props.userObj.username,
       created_at: Date.now(),
       votes: 0,
       body: this.state.comment
     };
+    console.dir(newComment);
     this.setState({
       commentObj: newComment
     });
@@ -98,8 +99,7 @@ class Article extends Component {
 
   clearComment = () => {
     this.setState({
-      comment: "",
-      commentObj: {}
+      comment: ""
     });
   };
 

@@ -11,11 +11,15 @@ export const updateVote = (direction, route, _id, updateState) => {
   axios.put(`${url}${route}/${_id}?vote=${direction}`).catch(console.log);
 };
 
-export const postComment = (comment, userObj, article_id) => {
+export const postComment = (comment, userObj, article_id, clearCommentObj) => {
   axios
     .post(`${url}articles/${article_id}/comments`, {
       body: comment,
-      created_by: userObj._id
+      created_by: userObj._id,
+      created_at: Number(userObj.created_at)
+    })
+    .then(commentObj => {
+      console.dir(commentObj.data.comment[0]);
     })
     .catch(console.log);
 };
