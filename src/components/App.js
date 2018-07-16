@@ -6,6 +6,8 @@ import Articles from "./Articles";
 import Article from "./Article";
 import Login from "./Login";
 import * as api from "./api";
+import PostArticle from "./PostArticle";
+import Error from "./Error";
 
 class App extends Component {
   state = {
@@ -26,9 +28,16 @@ class App extends Component {
         <FunctionBar />
         <Route exact path="/" component={Articles} />
         <Route
+          exact
           path="/articles/:article_id"
           render={props => <Article {...props} userObj={this.state.user} />}
         />
+        <Route
+          exact
+          path="/postarticle"
+          render={props => <PostArticle {...props} userObj={this.state.user} />}
+        />
+        <Route exact path="/error" render={props => <Error {...props} />} />
       </div>
     ) : (
       <div>

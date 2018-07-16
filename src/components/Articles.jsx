@@ -24,71 +24,78 @@ class Articles extends Component {
 
   render() {
     const { articles, topics, topicsSelected } = this.state;
-    return (
-      <div>
-        {/* Drop down for all article or articles by topics ------------------------------------------- */}
-        <select onChange={this.toggleTopics}>
-          <option defaultValue="selected">All</option>
-          <option>Topics</option>
-        </select>
-
-        {/* Drop down for topics, conditionally rendered when topics is selected from the above drop ------------------------------------------- */}
-        {topicsSelected && (
-          <select
-            id="topicSelection"
-            onChange={event => this.getArticlesByTopic(event.target.value)}
-          >
-            <option defaultValue="selected">Select topics</option>
-            {topics.map(topic => {
-              return (
-                <option value={topic.slug} key={topic._id}>
-                  {topic.title}
-                </option>
-              );
-            })}
+    if (this.state.articles.length > 0) {
+      return (
+        <div>
+          {/* Drop down for all article or articles by topics ------------------------------------------- */}
+          <select onChange={this.toggleTopics}>
+            <option defaultValue="selected">All</option>
+            <option>Topics</option>
           </select>
-        )}
 
-        {/* <select>
-        <option value>Popular</option>
-        <option>And another thing that's not recent because I don't have date on it you mug</option>
-      </select> */}
+          {/* Drop down for topics, conditionally rendered when topics is selected from the above drop ------------------------------------------- */}
+          {topicsSelected && (
+            <select
+              id="topicSelection"
+              onChange={event => this.getArticlesByTopic(event.target.value)}
+            >
+              <option defaultValue="selected">Select topics</option>
+              {topics.map(topic => {
+                return (
+                  <option value={topic.slug} key={topic._id}>
+                    {topic.title}
+                  </option>
+                );
+              })}
+            </select>
+          )}
 
-        {articles.map(articleObj => {
-          return (
-            <div key={articleObj._id}>
-              <p>Created by: {articleObj.created_by.username}</p>
-              <p>Topic: {articleObj.belongs_to}</p>
-              {/* I need to modify my backend to get the username with the articles instead of the user_id */}
-              <VoteButton
-                direction="up"
-                route="articles"
-                _id={articleObj._id}
-                updateState={this.updateState}
-                voted={articleObj.voted}
-              />
-              <VoteButton
-                direction="down"
-                route="articles"
-                _id={articleObj._id}
-                updateState={this.updateState}
-                voted={articleObj.voted}
-              />
-              <p>{articleObj.votes}</p>
-              <Link to={`/articles/${articleObj._id}`}>
-                <h3>{articleObj.title}</h3>
-              </Link>
-              <p>{articleObj.body}</p>
-              <p>Comments: {articleObj.comments || articleObj.count}</p>
-              <p>
-                {" "}
-                +--------------------------------------------------------+{" "}
-              </p>
-            </div>
-          );
-        })}
-      </div>
-    );
+          {/* <select>
+          <option value>Popular</option>
+          <option>And another thing that's not recent because I don't have date on it you mug</option>
+        </select> */}
+          <Link to="/postarticle">
+            <h3>Post Article</h3>
+          </Link>
+
+          {articles.map(articleObj => {
+            return (
+              <div key={articleObj._id}>
+                <p>Created by: {articleObj.created_by.username}</p>
+                <p>Topic: {articleObj.belongs_to}</p>
+                {/* I need to modify my backend to get the username with the articles instead of the user_id */}
+                <VoteButton
+                  direction="up"
+                  route="articles"
+                  _id={articleObj._id}
+                  updateState={this.updateState}
+                  voted={articleObj.voted}
+                />
+                <VoteButton
+                  direction="down"
+                  route="articles"
+                  _id={articleObj._id}
+                  updateState={this.updateState}
+                  voted={articleObj.voted}
+                />
+                <p>{articleObj.votes}</p>
+                <Link to={`/articles/${articleObj._id}`}>
+                  <h3>{articleObj.title}</h3>
+                </Link>
+                <p>{articleObj.body}</p>
+                <p>Comments: {articleObj.comments || articleObj.count}</p>
+                <p>
+                  {" "}
+                  +--------------------------------------------------------+{" "}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      );
+    } else {
+      return <div>Loading...</div>;
+    }
   }
 
   toggleTopics = () => {

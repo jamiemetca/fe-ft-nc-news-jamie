@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import Comments from "./Comments";
 import * as api from "./api";
 import VoteButton from "./VoteButton";
@@ -7,6 +7,7 @@ import "./Article.css";
 
 class Article extends Component {
   state = {
+    error: {},
     commentObj: {},
     comment: "",
     article: {}
@@ -20,60 +21,78 @@ class Article extends Component {
         this.setState({
           article: articleObj.data.articles[0]
         });
+      })
+      .catch(err => {
+        this.setState({
+          error: {
+            pathname: "/error",
+            state: {
+              status: err.response.status,
+              message: err.response.data.message
+            }
+          }
+        });
       });
   }
 
   render() {
     const { article } = this.state;
-    if (article._id) {
-      return (
-        <div>
-          <button>Next-></button>
-          <Link to="/">Back to Articles</Link>
-          <div>
-            <p>OP: {article.created_by.username}</p>
-            <div className="articleCreatorImg">
-              <img src={article.created_by.avatar_url} alt="profile_url" />
-            </div>
-            <VoteButton
-              direction="up"
-              route="articles"
-              _id={article._id}
-              updateState={this.updateState}
-              voted={this.state.article.voted}
-            />
-            <VoteButton
-              direction="down"
-              route="articles"
-              _id={article._id}
-              updateState={this.updateState}
-              voted={this.state.article.voted}
-            />
-            <p>{article.votes}</p>
-            <h3>{article.title}</h3>
-            <p>{article.body}</p>
-            <form>
-              <input
-                type="text"
-                placeholder="comment"
-                value={this.state.comment}
-                onChange={this.updateComment}
-              />
-              <button type="button" onClick={this.postCommentAndUpdateState}>
-                submit
-              </button>
-            </form>
-            <p> +--------------------------------------------------------+ </p>
-          </div>
-          <Comments
-            article_id={article._id}
-            userObj={this.props.userObj}
-            postedComment={this.state.commentObj}
-          />
-        </div>
-      );
+    if (this.state.error.pathname) {
+      return <Redirect to={this.state.error} />;
     } else {
-      return <div>Loading...</div>;
+      if (article._id) {
+        return (
+          <div>
+            {/* <button>Next-></button> */}
+            <Link to="/">Back to Articles</Link>
+            <div>
+              <p>OP: {article.created_by.username}</p>
+              <div className="articleCreatorImg">
+                <img src={article.created_by.avatar_url} alt="profile_url" />
+              </div>
+              <VoteButton
+                direction="up"
+                route="articles"
+                _id={article._id}
+                updateState={this.updateState}
+                voted={this.state.article.voted}
+              />
+              <VoteButton
+                direction="down"
+                route="articles"
+                _id={article._id}
+                updateState={this.updateState}
+                voted={this.state.article.voted}
+              />
+              <p>{article.votes}</p>
+              <h3>{article.title}</h3>
+              <p>{article.body}</p>
+              <form>
+                <input
+                  type="text"
+                  placeholder="comment"
+                  value={this.state.comment}
+                  onChange={this.updateComment}
+                />
+                <button type="button" onClick={this.postCommentAndUpdateState}>
+                  submit
+                </button>
+              </form>
+              <p>
+                {" "}
+                +--------------------------------------------------------+{" "}
+              </p>
+            </div>
+            <Comments
+              article_id={article._id}
+              userObj={this.props.userObj}
+              postedComment={this.state.commentObj}
+            />
+          </div>
+        );
+      } else {
+        return <div>Loading...</div>;
+      }
     }
   }
 
@@ -85,16 +104,27 @@ class Article extends Component {
       votes: 0,
       body: this.state.comment
     };
-    console.dir(newComment);
     this.setState({
       commentObj: newComment
     });
-    api.postComment(
-      this.state.comment,
-      this.props.userObj,
-      this.state.article._id,
-      this.clearComment()
-    );
+    api
+      .postComment(
+        this.state.comment,
+        this.props.userObj,
+        this.state.article._id,
+        this.clearComment()
+      )
+      .catch(err => {
+        this.setState({
+          error: {
+            pathname: "/error",
+            state: {
+              status: err.response.status,
+              message: err.response.data.message
+            }
+          }
+        });
+      });
   };
 
   clearComment = () => {
