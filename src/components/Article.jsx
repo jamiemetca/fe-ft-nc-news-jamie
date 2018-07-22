@@ -4,17 +4,16 @@ import Comments from "./Comments";
 import * as api from "./api";
 import VoteButton from "./VoteButton";
 import "./Article.css";
+import { MyContext } from "./MyProvider";
 
 class Article extends Component {
   state = {
     error: {},
-    commentObj: {},
     comment: "",
     article: {}
   };
 
   componentDidMount() {
-    // const { article_id } = this.props.match.params;
     api
       .getFromApi(`articles/${this.props.match.params.article_id}`)
       .then(articleObj => {
@@ -42,53 +41,61 @@ class Article extends Component {
     } else {
       if (article._id) {
         return (
-          <div>
-            {/* <button>Next-></button> */}
-            <Link to="/">Back to Articles</Link>
-            <div>
-              <p>OP: {article.created_by.username}</p>
-              <div className="articleCreatorImg">
-                <img src={article.created_by.avatar_url} alt="profile_url" />
+          <MyContext.Consumer>
+            {context => (
+              <div>
+                <Link to="/">Back to Articles</Link>
+                <div>
+                  <p>OP: {article.created_by.username}</p>
+                  <div className="articleCreatorImg">
+                    <img
+                      src={article.created_by.avatar_url}
+                      alt="profile_url"
+                    />
+                  </div>
+                  <VoteButton
+                    direction="up"
+                    route="articles"
+                    _id={article._id}
+                    updateState={this.updateState}
+                    voted={this.state.article.voted}
+                  />
+                  <VoteButton
+                    direction="down"
+                    route="articles"
+                    _id={article._id}
+                    updateState={this.updateState}
+                    voted={this.state.article.voted}
+                  />
+                  <p>{article.votes}</p>
+                  <h3>{article.title}</h3>
+                  <p>{article.body}</p>
+                  <form>
+                    <input
+                      type="text"
+                      placeholder="comment"
+                      value={this.state.comment}
+                      onChange={this.updateComment}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        this.postCommentAndUpdateState(context.state.user)
+                      }
+                    >
+                      submit
+                    </button>
+                  </form>
+                  <p>
+                    {" "}
+                    +--------------------------------------------------------+{" "}
+                  </p>
+                </div>
+                <Comments article_id={article._id} />
+                {/* How do I rerender the comments? */}
               </div>
-              <VoteButton
-                direction="up"
-                route="articles"
-                _id={article._id}
-                updateState={this.updateState}
-                voted={this.state.article.voted}
-              />
-              <VoteButton
-                direction="down"
-                route="articles"
-                _id={article._id}
-                updateState={this.updateState}
-                voted={this.state.article.voted}
-              />
-              <p>{article.votes}</p>
-              <h3>{article.title}</h3>
-              <p>{article.body}</p>
-              <form>
-                <input
-                  type="text"
-                  placeholder="comment"
-                  value={this.state.comment}
-                  onChange={this.updateComment}
-                />
-                <button type="button" onClick={this.postCommentAndUpdateState}>
-                  submit
-                </button>
-              </form>
-              <p>
-                {" "}
-                +--------------------------------------------------------+{" "}
-              </p>
-            </div>
-            <Comments
-              article_id={article._id}
-              userObj={this.props.userObj}
-              postedComment={this.state.commentObj}
-            />
-          </div>
+            )}
+          </MyContext.Consumer>
         );
       } else {
         return <div>Loading...</div>;
@@ -96,24 +103,14 @@ class Article extends Component {
     }
   }
 
-  postCommentAndUpdateState = () => {
-    const newComment = {
-      _id: Date.now() * Math.floor(Math.random() * 100), //I know this is bad. Plan to find a better method for a temp ID.
-      created_by: this.props.userObj.username,
-      created_at: Date.now(),
-      votes: 0,
-      body: this.state.comment
-    };
-    this.setState({
-      commentObj: newComment
-    });
+  postCommentAndUpdateState = userObj => {
     api
-      .postComment(
-        this.state.comment,
-        this.props.userObj,
-        this.state.article._id,
-        this.clearComment()
-      )
+      .postComment(this.state.comment, userObj, this.state.article._id)
+      .then(() => {
+        this.setState({
+          comment: ""
+        });
+      })
       .catch(err => {
         this.setState({
           error: {
@@ -125,12 +122,6 @@ class Article extends Component {
           }
         });
       });
-  };
-
-  clearComment = () => {
-    this.setState({
-      comment: ""
-    });
   };
 
   updateComment = event => {

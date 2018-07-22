@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { MyContext } from "./MyProvider";
 
 class Login extends Component {
   state = {
@@ -6,24 +7,32 @@ class Login extends Component {
   };
   render() {
     return (
-      <div>
-        <form>
-          <input
-            type="text"
-            value={this.state.username}
-            onChange={this.updateUsername}
-            placeholder="username"
-          />
-          <button type="button" onClick={this.checkUsernameAndClear}>
-            Login
-          </button>
-        </form>
-      </div>
+      <MyContext.Consumer>
+        {context => (
+          <div>
+            <form>
+              <input
+                type="text"
+                value={this.state.username}
+                onChange={this.updateUsername}
+                placeholder="jessjelly"
+                // username hint
+              />
+              <button
+                type="button"
+                onClick={() => this.checkUsernameAndClear(context.logIn)}
+              >
+                Login
+              </button>
+            </form>
+          </div>
+        )}
+      </MyContext.Consumer>
     );
   }
 
-  checkUsernameAndClear = () => {
-    this.props.logIn(this.state.username);
+  checkUsernameAndClear = logIn => {
+    logIn(this.state.username);
     this.setState({
       username: ""
     });

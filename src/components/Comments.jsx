@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import * as api from "./api";
 import VoteButton from "./VoteButton";
 import axios from "axios";
+import { MyContext } from "./MyProvider";
 
 class Comments extends Component {
   state = {
@@ -31,91 +32,72 @@ class Comments extends Component {
           });
         });
     }
-    if (this.props.postedComment !== prevProps.postedComment) {
-      this.optimisticallyRenderComments(this.props.postedComment);
-    }
   }
 
   render() {
     const { comments } = this.state;
-    const { userObj } = this.props;
     return (
-      <div>
-        {comments.map((comment, index) => {
-          return (
-            <div key={comment._id}>
-              <p>OP: {comment.created_by}</p>
-              <p>
-                Created:{" "}
-                {Math.round(
-                  (this.state.timeNow - comment.created_at) /
-                    1000 /
-                    60 /
-                    60 /
-                    24
-                )}{" "}
-                days ago
-              </p>
-              {comment.belongs_to && (
-                <div>
-                  <VoteButton
-                    direction="up"
-                    route="comments"
-                    _id={comment._id}
-                    updateState={this.updateState}
-                    voted={comment.voted}
-                  />
-                  <VoteButton
-                    direction="down"
-                    route="comments"
-                    _id={comment._id}
-                    updateState={this.updateState}
-                    voted={comment.voted}
-                  />
+      <MyContext.Consumer>
+        {context => (
+          <div>
+            {comments.map((comment, index) => {
+              return (
+                <div key={comment._id}>
+                  <p>OP: {comment.created_by}</p>
+                  <p>
+                    Created:{" "}
+                    {Math.round(
+                      (this.state.timeNow - comment.created_at) /
+                        1000 /
+                        60 /
+                        60 /
+                        24
+                    )}{" "}
+                    days ago
+                  </p>
+                  {comment.belongs_to && (
+                    <div>
+                      <VoteButton
+                        direction="up"
+                        route="comments"
+                        _id={comment._id}
+                        updateState={this.updateState}
+                        voted={comment.voted}
+                      />
+                      <VoteButton
+                        direction="down"
+                        route="comments"
+                        _id={comment._id}
+                        updateState={this.updateState}
+                        voted={comment.voted}
+                      />
+                    </div>
+                  )}
+                  <p>{comment.votes}</p>
+                  <p>{comment.body}</p>
+                  {comment.belongs_to &&
+                    context.state.user.username === comment.created_by && (
+                      <button
+                        onClick={this.deleteComment}
+                        type="button"
+                        id={comment._id}
+                        name={index}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  <p>
+                    {" "}
+                    +--------------------------------------------------------+{" "}
+                  </p>
                 </div>
-              )}
-              <p>{comment.votes}</p>
-              <p>{comment.body}</p>
-              {comment.belongs_to &&
-                userObj.username === comment.created_by && (
-                  <button
-                    onClick={this.deleteComment}
-                    type="button"
-                    id={comment._id}
-                    name={index}
-                  >
-                    Delete
-                  </button>
-                )}
-              <p>
-                {" "}
-                +--------------------------------------------------------+{" "}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        )}
+      </MyContext.Consumer>
     );
   }
-
-  // Need to invoke this function once the api call to post the comment has resoled.
-  replaceOptimisticallyRenderedComment = apiCommentObj => {
-    const newComments = [...this.state.comments];
-    newComments.map(comment => {
-      if (comment._id === "__999__") {
-        comment = apiCommentObj;
-      }
-      return comment;
-    });
-  };
-
-  optimisticallyRenderComments = newComment => {
-    this.state.comments.unshift(newComment);
-    const newComments = this.state.comments;
-    this.setState({
-      comments: newComments
-    });
-  };
 
   deleteComment = event => {
     const { id } = event.target;

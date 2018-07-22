@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import * as api from "./api";
+import { MyContext } from "./MyProvider";
 
 class PostArticle extends Component {
   state = {
@@ -30,52 +31,63 @@ class PostArticle extends Component {
       );
     } else {
       return (
-        <div>
-          <Link to="/">Back to Articles</Link>
-          {/* Drop down to set article topic */}
-          <select onChange={event => this.selectedTopic(event.target.value)}>
-            <option
-              defaultValue="selected"
-              disabled={this.state.selectedTopic && "disabled"}
-            >
-              Select article topic
-            </option>
-            {this.state.topics.map(topic => {
-              return (
-                <option value={topic.slug} key={topic._id}>
-                  {topic.title}
+        <MyContext.Consumer>
+          {context => (
+            <div>
+              <Link to="/">Back to Articles</Link>
+              {/* Drop down to set article topic */}
+              <select
+                onChange={event => this.selectedTopic(event.target.value)}
+              >
+                <option
+                  defaultValue="selected"
+                  disabled={this.state.selectedTopic && "disabled"}
+                >
+                  Select article topic
                 </option>
-              );
-            })}
-          </select>
-          <form>
-            <input
-              type="text"
-              placeholder="Article title"
-              value={this.state.title}
-              onChange={this.updateTitle}
-            />
-            <input
-              type="text"
-              placeholder="Body"
-              value={this.state.article}
-              onChange={this.updateArticle}
-            />
-            <button type="button" onClick={this.postArticleAndUpdateState}>
-              Submit
-            </button>
-          </form>
-        </div>
+                {this.state.topics.map(topic => {
+                  return (
+                    <option value={topic.slug} key={topic._id}>
+                      {topic.title}
+                    </option>
+                  );
+                })}
+              </select>
+              <form>
+                <input
+                  type="text"
+                  placeholder="Article title"
+                  value={this.state.title}
+                  onChange={this.updateTitle}
+                />
+                <input
+                  type="text"
+                  placeholder="Body"
+                  value={this.state.article}
+                  onChange={this.updateArticle}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    this.postArticleAndUpdateState(context.state.user)
+                  }
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+          )}
+        </MyContext.Consumer>
       );
     }
   }
 
-  postArticleAndUpdateState = () => {
+  postArticleAndUpdateState = userObj => {
     const newArticle = {
       title: this.state.title,
       body: this.state.article,
       belongs_to: this.state.selectedTopic,
-      created_by: this.props.userObj.username
+      created_by: userObj.username
     };
     if (!Object.values(newArticle).includes("")) {
       api

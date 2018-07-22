@@ -17,7 +17,6 @@ export const postComment = (comment, userObj, article_id) => {
     created_by: userObj._id,
     created_at: Number(userObj.created_at)
   });
-  // Should I have optimistically rendered?
 };
 
 export const postArticle = articleObj => {
