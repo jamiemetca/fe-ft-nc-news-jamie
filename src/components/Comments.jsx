@@ -42,55 +42,62 @@ class Comments extends Component {
           <div>
             {comments.map((comment, index) => {
               return (
-                <div key={comment._id}>
-                  <p>OP: {comment.created_by}</p>
-                  <p>
-                    Created:{" "}
-                    {Math.round(
-                      (this.state.timeNow - comment.created_at) /
-                        1000 /
-                        60 /
-                        60 /
-                        24
-                    )}{" "}
-                    days ago
-                  </p>
+                <article className='media has-background-grey-lighter'>
+                  {/* creator and days since creation */}
+                  <figure className='media-left' key={comment._id}>
+                    <p>OP:</p>
+                    <p>{comment.created_by}</p>
+                    <p>Created:</p>
+                    <p>
+                      {Math.round(
+                        (this.state.timeNow - comment.created_at) /
+                          1000 /
+                          60 /
+                          60 /
+                          24
+                      )}{" "}
+                      days ago
+                    </p>
+                  </figure>
+                  {/* comment body and delete button */}
                   {comment.belongs_to && (
-                    <div>
-                      <VoteButton
-                        direction="up"
-                        route="comments"
-                        _id={comment._id}
-                        updateState={this.updateState}
-                        voted={comment.voted}
-                      />
-                      <VoteButton
-                        direction="down"
-                        route="comments"
-                        _id={comment._id}
-                        updateState={this.updateState}
-                        voted={comment.voted}
-                      />
+                    <div className='media-content' >
+                      <div className='content'>
+                        <p>{comment.body}</p>   
+                      </div>
+                      {comment.belongs_to &&
+                      context.state.user.username === comment.created_by && (
+                        <button
+                          className='delete is-medium'
+                          onClick={this.deleteComment}
+                          type="button"
+                          id={comment._id}
+                          name={index}
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   )}
-                  <p>{comment.votes}</p>
-                  <p>{comment.body}</p>
-                  {comment.belongs_to &&
-                    context.state.user.username === comment.created_by && (
-                      <button
-                        onClick={this.deleteComment}
-                        type="button"
-                        id={comment._id}
-                        name={index}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  <p>
-                    {" "}
-                    +--------------------------------------------------------+{" "}
-                  </p>
-                </div>
+                  {/* vote count and buttons */}
+                  <figure className='media-right has-text-centered'>
+                    <VoteButton
+                      direction="up"
+                      route="comments"
+                      _id={comment._id}
+                      updateState={this.updateState}
+                      voted={comment.voted}
+                    />
+                    <p>{comment.votes}</p>
+                    <VoteButton
+                      direction="down"
+                      route="comments"
+                      _id={comment._id}
+                      updateState={this.updateState}
+                      voted={comment.voted}
+                    />
+                  </figure>
+                </article>
               );
             })}
           </div>

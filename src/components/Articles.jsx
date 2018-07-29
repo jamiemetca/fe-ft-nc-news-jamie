@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import * as api from "./api";
 import VoteButton from "./VoteButton";
+import Loading from './Loading'
 
 class Articles extends Component {
   // get articles by id first, then get by topic if topics is selected.
   state = {
+    error: {},
     articles: [],
     topicsSelected: false,
     topics: []
@@ -26,95 +28,117 @@ class Articles extends Component {
     const { articles, topics, topicsSelected } = this.state;
     if (this.state.articles.length > 0) {
       return (
-        <div>
-          {/* Drop down for all article or articles by topics ------------------------------------------- */}
-          <select onChange={this.toggleTopics}>
-            <option defaultValue="selected">All</option>
-            <option>Topics</option>
-          </select>
+        <div className='container'>
 
-          {/* Drop down for topics, conditionally rendered when topics is selected from the above drop ------------------------------------------- */}
-          {topicsSelected && (
-            <select
-              id="topicSelection"
-              onChange={event => this.getArticlesByTopic(event.target.value)}
-            >
-              <option defaultValue="selected">Select topics</option>
-              {topics.map(topic => {
-                return (
-                  <option value={topic.slug} key={topic._id}>
-                    {topic.title}
-                  </option>
-                );
-              })}
-            </select>
-          )}
+          
+          {/* Navigation bar to select topics. */}
+          <nav className='level is-mobile'>
+            <div className='level-item has-text-centered has-text-black has-background-grey-light box'>
+            <p className='heading is-size-4' onClick={this.getAllArticles}>All</p>
+            </div>
+            {topics.map(topic => {
+              return (
+                <div className='level-item has-text-centered has-text-black has-background-grey-light box' onClick={() => this.getArticlesByTopic(topic.slug)}>
+                  <p className='heading is-size-4' >{topic.title}</p>
+                </div>
+              )
+            })}
+            </nav>
 
-          {/* <select>
-          <option value>Popular</option>
-          <option>And another thing that's not recent because I don't have date on it you mug</option>
-        </select> */}
-          <Link to="/postarticle">
-            <h3>Post Article</h3>
+          <Link  className='column is half' to="/postarticle">
+              <h3 className='button'>Post Article</h3>
           </Link>
 
           {articles.map(articleObj => {
             return (
-              <div key={articleObj._id}>
-                <p>Created by: {articleObj.created_by.username}</p>
-                <p>Topic: {articleObj.belongs_to}</p>
-                {/* I need to modify my backend to get the username with the articles instead of the user_id */}
-                <VoteButton
+
+
+              <div className='columns has-background-grey-lighter' key={articleObj._id}>
+
+                    <div className='column is-1'>
+                  <p>Creator: {articleObj.created_by.username}</p>
+                  <p>Topic: {articleObj.belongs_to}</p>
+                    </div>
+
+                <div className='column has-background-grey-light'>
+                  <div className='content'>
+
+                    <Link to={`/articles/${articleObj._id}`}>
+                      <h3>{articleObj.title}</h3>
+                    </Link>
+                    <p>{articleObj.body}</p>
+                    <p className='has-background-grey-lighter'>Comments: {articleObj.comments || articleObj.count}</p>
+                  </div>
+              </div>
+                <div className='column is-1 has-text-centered'>
+                    <VoteButton
                   direction="up"
                   route="articles"
                   _id={articleObj._id}
                   updateState={this.updateState}
                   voted={articleObj.voted}
-                />
-                <VoteButton
+                  />
+                  <p className='is-size-3'>{articleObj.votes}</p>
+                    <VoteButton
                   direction="down"
                   route="articles"
                   _id={articleObj._id}
                   updateState={this.updateState}
                   voted={articleObj.voted}
-                />
-                <p>{articleObj.votes}</p>
-                <Link to={`/articles/${articleObj._id}`}>
-                  <h3>{articleObj.title}</h3>
-                </Link>
-                <p>{articleObj.body}</p>
-                <p>Comments: {articleObj.comments || articleObj.count}</p>
-                <p>
-                  {" "}
-                  +--------------------------------------------------------+{" "}
-                </p>
-              </div>
+                  />
+                  </div>
+            </div>
+
             );
           })}
+          <footer class="footer">
+            <div class="content has-text-centered">
+              <p>
+                <strong>NC news</strong> created by <a href="https://github.com/jamiemetca">Jamie Metcalfe</a>.
+                  Skills taught by <a href="https://northcoders.com/">Northcoders of Manchester</a>.
+              </p>
+            </div>
+          </footer>
         </div>
       );
     } else {
-      return <div>Loading...</div>;
+      return <Loading/>
     }
   }
 
-  toggleTopics = () => {
-    this.state.topicsSelected
-      ? api.getFromApi("articles").then(articleObj => {
-          this.setState({
-            articles: articleObj.data.articles,
-            topicsSelected: !this.state.topicsSelected
-          });
-        })
-      : this.setState({
-          topicsSelected: !this.state.topicsSelected
+  getAllArticles = () => {
+    api.getFromApi("articles").then(articleObj => {
+      this.setState({
+        articles: articleObj.data.articles
+      });
+    })
+      .catch(err => {
+        this.setState({
+          error: {
+            pathname: "/error",
+            state: {
+              status: err.response.status,
+              message: err.response.data.message
+            }
+          }
         });
-  };
+      })
+  }
 
   getArticlesByTopic = value => {
     api.getFromApi(`topics/${value}/articles`).then(articlesByTopicObj => {
       this.setState({
         articles: articlesByTopicObj.data.articles
+      });
+    }).catch(err => {
+      this.setState({
+        error: {
+          pathname: "/error",
+          state: {
+            status: err.response.status,
+            message: err.response.data.message
+          }
+        }
       });
     });
   };

@@ -26,56 +26,72 @@ class PostArticle extends Component {
       return (
         <div>
           <h3>Article posted</h3>
-          <Link to="/">Back to Articles</Link>
+          <Link className='button' to="/">Back to Articles</Link>
         </div>
       );
     } else {
       return (
         <MyContext.Consumer>
           {context => (
-            <div>
-              <Link to="/">Back to Articles</Link>
-              {/* Drop down to set article topic */}
-              <select
-                onChange={event => this.selectedTopic(event.target.value)}
-              >
-                <option
-                  defaultValue="selected"
-                  disabled={this.state.selectedTopic && "disabled"}
-                >
-                  Select article topic
-                </option>
-                {this.state.topics.map(topic => {
-                  return (
-                    <option value={topic.slug} key={topic._id}>
-                      {topic.title}
-                    </option>
-                  );
-                })}
-              </select>
-              <form>
-                <input
-                  type="text"
-                  placeholder="Article title"
-                  value={this.state.title}
-                  onChange={this.updateTitle}
-                />
-                <input
-                  type="text"
-                  placeholder="Body"
-                  value={this.state.article}
-                  onChange={this.updateArticle}
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    this.postArticleAndUpdateState(context.state.user)
-                  }
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+            <article className='media'>
+              <div>
+                <div className='level'>
+                  <div className='level-left' >
+                    <Link className='button' to="/">Back to Articles</Link>
+                  </div>
+                  {/* Drop down to set article topic */}
+                  <div className='level-right' >
+                    <select
+                      onChange={event => this.selectedTopic(event.target.value)}
+                    >
+                      <option
+                        defaultValue="selected"
+                        disabled={this.state.selectedTopic && "disabled"}
+                      >
+                        Select article topic
+                      </option>
+                      {this.state.topics.map(topic => {
+                        return (
+                          <option value={topic.slug} key={topic._id}>
+                            {topic.title}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+                <div className='media-content'>
+                  <div>
+                    <form>
+                      <div className='level'>
+                        <textarea
+                          className='textarea'
+                          type="text"
+                          placeholder="Add article title..."
+                          value={this.state.title}
+                          onChange={this.updateTitle}
+                          />
+                        <textarea
+                          className='textarea'
+                          type="text"
+                          placeholder="Add article body..."
+                          value={this.state.article}
+                          onChange={this.updateArticle}
+                          />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                        this.postArticleAndUpdateState(context.state.user)
+                        }
+                      >
+                        Submit
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </article>
           )}
         </MyContext.Consumer>
       );

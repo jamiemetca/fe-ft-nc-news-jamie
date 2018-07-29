@@ -9,8 +9,12 @@ class Login extends Component {
     return (
       <MyContext.Consumer>
         {context => (
-          <div>
-            <form>
+          <div className='container'>
+            <div className='notification'>
+              <nav className='level'>
+                <h3 className='subtitle is-5'>{`Welcome to ${`<`} Northcoders news${`/>`}`}</h3>
+                <h3 className='level-item'>Please sign in</h3>
+            <form className='level-item'>
               <input
                 type="text"
                 value={this.state.username}
@@ -25,6 +29,8 @@ class Login extends Component {
                 Login
               </button>
             </form>
+              </nav>
+            </div>
           </div>
         )}
       </MyContext.Consumer>

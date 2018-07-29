@@ -3,8 +3,8 @@ import { Link, Redirect } from "react-router-dom";
 import Comments from "./Comments";
 import * as api from "./api";
 import VoteButton from "./VoteButton";
-import "./Article.css";
 import { MyContext } from "./MyProvider";
+import Loading from './Loading'
 
 class Article extends Component {
   state = {
@@ -44,61 +44,85 @@ class Article extends Component {
           <MyContext.Consumer>
             {context => (
               <div>
-                <Link to="/">Back to Articles</Link>
-                <div>
-                  <p>OP: {article.created_by.username}</p>
-                  <div className="articleCreatorImg">
-                    <img
+                <Link className='button' to="/">Back to Articles</Link>
+
+                <article className='media'>
+                  <figure className='media-left'>
+                    <p>OP: {article.created_by.username}</p>
+                    <p className="image is-64x64">
+                      <img
                       src={article.created_by.avatar_url}
                       alt="profile_url"
-                    />
+                      />
+                    </p>
+                  </figure>
+
+                  <div className='media-content'>
+
+                    <div className='content'>
+                      <p>
+                        <strong>{article.title}</strong>
+                        <p>{article.body}</p>
+                      </p>
+                    </div>
+
+                    <Comments article_id={article._id} />
+
+                    {/* Add comment */}
+                    <article className='media'>
+                      <div className='media-content'>
+                        <div className='field'>
+                          <p className='control'>
+                            <input
+                              className='textarea'
+                              type="text"
+                              placeholder="Add a comment..."
+                              value={this.state.comment}
+                              onChange={this.updateComment}
+                            />
+                          </p>
+                        </div>
+                        <div className='field'>
+                          <p className='control'>
+                            <button
+                              className='button'
+                              type="button"
+                              onClick={() =>
+                                this.postCommentAndUpdateState(context.state.user)
+                              }
+                              >Post comment
+                            </button>
+                          </p>
+                        </div>
+                      </div>
+                    </article>
                   </div>
-                  <VoteButton
-                    direction="up"
-                    route="articles"
-                    _id={article._id}
-                    updateState={this.updateState}
-                    voted={this.state.article.voted}
-                  />
-                  <VoteButton
-                    direction="down"
-                    route="articles"
-                    _id={article._id}
-                    updateState={this.updateState}
-                    voted={this.state.article.voted}
-                  />
-                  <p>{article.votes}</p>
-                  <h3>{article.title}</h3>
-                  <p>{article.body}</p>
-                  <form>
-                    <input
-                      type="text"
-                      placeholder="comment"
-                      value={this.state.comment}
-                      onChange={this.updateComment}
+                    
+                  {/* Article vote count and buttons */}
+                  <figure className='media-right has-text-centered'>
+                    <VoteButton
+                      direction="up"
+                      route="articles"
+                      _id={article._id}
+                      updateState={this.updateState}
+                      voted={this.state.article.voted}
                     />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        this.postCommentAndUpdateState(context.state.user)
-                      }
-                    >
-                      submit
-                    </button>
-                  </form>
-                  <p>
-                    {" "}
-                    +--------------------------------------------------------+{" "}
-                  </p>
-                </div>
-                <Comments article_id={article._id} />
-                {/* How do I rerender the comments? */}
+                    <p>{article.votes}</p>
+                    <VoteButton
+                      direction="down"
+                      route="articles"
+                      _id={article._id}
+                      updateState={this.updateState}
+                      voted={this.state.article.voted}
+                    />
+                  </figure>
+                </article>
               </div>
             )}
           </MyContext.Consumer>
         );
       } else {
-        return <div>Loading...</div>;
+        return <Loading/>
       }
     }
   }

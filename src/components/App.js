@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./App.css";
 import { Route } from "react-router-dom";
 import FunctionBar from "./FunctionBar";
 import Articles from "./Articles";
@@ -17,16 +16,14 @@ class App extends Component {
         <MyContext.Consumer>
           {context =>
             context.state.loggedIn ? (
-              <div className="App">
+              <div className="container is-fluid has-background-primary">
                 <FunctionBar />
                 <Route exact path="/" component={Articles} />
                 <Route exact path="/articles/:article_id" component={Article} />
                 <Route exact path="/postarticle" component={PostArticle} />
                 <Route exact path="/error" component={Error} />
               </div>
-            ) : (
-              <Route exact path="/" component={Login} />
-            )
+            ) : <Route exact path="/" component={Login} />
           }
         </MyContext.Consumer>
       </MyProvider>

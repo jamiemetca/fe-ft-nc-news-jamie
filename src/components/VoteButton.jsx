@@ -7,9 +7,10 @@ const VoteButton = ({ direction, route, _id, updateState, voted }) => {
   }
   return (
     <button
+      className='button is-small'
       type="button"
       onClick={() => api.updateVote(direction, route, _id, updateState)}
-    >{`vote ${direction}`}</button>
+    >{'Vote'}</button>
   );
 };
 
