@@ -1,38 +1,57 @@
-## Northcoders News
+# Northcoders News (Frontend)
 
-Northcoders News is a social news aggregation, web content rating, and discussion website. Think something along the lines of [Reddit](https://www.reddit.com/).
 
-Northcoders News has articles which are divided into topics. Each article has user curated ratings and can be up or down voted using the API. Users can also add comments about an article. Comments can also be up or down voted. A user can add comments and remove any comments which they have added.
+Northcoder News is a Reddit themed news aggragation site.
 
-This review sprint should consolidate your understanding of making a [C.R.U.D](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) application from a front end perspective.
+Users and can;
+- Write, comment on or vote up/down articles.
+- Vote up/down comments.
+- Delete articles of comments if they are the author.
 
-### Objectives
-1. Pull together all the front-end skills, technologies and best practises you have learnt over the past three weeks.
-2. Make asynchronous API calls to your own server.
-4. Use HTTP request types to interact with your backend, and HTTP response codes to update your UI accordingly.
+This is the frontend of the project. The back end can be found [here](https://github.com/jamiemetca/backend-northcodersnews)
 
-### What to do
+The landing page is an enter username screen. From here users are taken to the articles page.
 
-Use the generic react-project-checklist as a guide to setting up your app. Here are some project-specific things to bear in mind:
+Articles are displayed in either one long list or in groups based on topics.
 
-1. Have a look at your API endpoints and at Reddit. Think about what data you have available, and how you will structure your application. What routes will your application have? What articles will you choose to display on the main page?
+From here users can vote up or down on an article or click into the aritlce to see the comments on that article. Comments can also be voted on once inside the article.
 
-2. Think how you will isolate the concerns of your project - the structure of your components, the sourcing of your data, the styling.
+A user must be signed in to delete comments or articles and can only delete comment or aritlces that they have created.
 
-3. What sort of routing does Reddit use? What sort of specificity do you think you will need? Remember, your urls don't have to directly correspond to your api endpoints, but they will provide some guidance.
+Bulma was used for the styling.
 
-4. Think about what data each component will need. Where will it come from? When should components find their own data and when should they load it themselves? Focus on loading a list of articles for your front page first of all.
+### Prerequisites
 
-5. Consider more complex functionality: how do you want to allow changes to your database? Think about how you will attribute users to posted comments etc. How will you know what comments/articles a user should be allowed to delete? How about sorting data, or paginating responses? A good starting point would be to pick a single user and assuming that all new articles and comments are being posted by that user.
+The dependancies are as follows;
+```
+"axios": "^0.18.0",
+    "bulma": "^0.7.1",
+    "bulma-start": "0.0.2",
+    "npm": "^6.2.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4"
+```
 
-6. How are you going to make this a fluid and engaging experience for users, so they want to come back for more?
+### Installing
 
-### Extra credit
+You can install the dependancies with the command
+```
+$ npm install
+```
 
-1. Create a route which shows which users have been most active adding articles and comments
-2. Make this route sort the users by how popular they are based on an aggregation of their article and comment vote counts
-3. Implement a filter which re-orders comments based on either the time they were added, or how many votes they have got.
+## Getting Started
 
-### Important
+The project can be ran by typing the following command at the root level;
+```
+$ npm start
+```
 
-This sprint is among the ones we'll ask you to complete in order to put you forward for jobs. Put a little bit of love into it! :)
+## Deployment
+
+The project is deployed [here](https://quirky-joliot-7c899a.netlify.com/)
+
+## Authors
+
+**Jamie Metcalfe**
