@@ -13,7 +13,7 @@ class Login extends Component {
             <div className='notification'>
               <nav className='level'>
                 <h3 className='subtitle is-5'>{`Welcome to ${`<`} Northcoders news${`/>`}`}</h3>
-                <h3 className='level-item'>Please sign in</h3>
+                <h3 className='level-item'>Please sign in with the following default username - jessjelly</h3>
             <form className='level-item'>
               <input
                 type="text"
